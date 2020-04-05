@@ -107,7 +107,6 @@ int main(int argc, char* argv[]) {
         usage();
         return -1;
     }
-
     char* dev = argv[1];
     char errbuf[PCAP_ERRBUF_SIZE];
     pcap_t* handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
@@ -115,7 +114,6 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "couldn't open device %s(%s)\n", dev, errbuf);
         return -1;
     }
-
     while (true) {
         struct pcap_pkthdr* header;
         const u_char* packet;
@@ -134,7 +132,7 @@ int main(int argc, char* argv[]) {
                 print_ip(iph->src_ip,iph->dst_ip);
                 print_port(tcph->src_port,tcph->dst_port);
                 packet += (tcph->h_len*4);
-                for (int i=0;i<16;i++) {
+                for (int i=0;(i<16) && (packet[i] != '\x00');i++) {
                     if (i == 15)
                         printf("%c\n\n\n", packet[i]);
                     else
@@ -143,6 +141,5 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-
     pcap_close(handle);
 }
