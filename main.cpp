@@ -38,10 +38,9 @@ typedef struct _type_tcp{
     uint16_t dst_port;
     uint32_t seq;
     uint32_t ack;
-    uint8_t rev:4;
+    uint8_t flag:4;
     uint8_t h_len:4;
-    uint8_t flag:6;
-    uint8_t rev2:2;
+    uint8_t flag_2;
     uint16_t window;
     uint16_t checksum;
     uint16_t urgent;
