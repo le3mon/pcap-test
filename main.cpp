@@ -4,9 +4,11 @@
 #include <net/ethernet.h>
 #include <string.h>
 #include <stdlib.h>
+#include <algorithm>
 
 #define MAC_LEN 6
 #define IP_LEN 4
+using namespace std;
 
 #pragma pack(push, 1)
 typedef struct _type_ethernet{
@@ -133,13 +135,13 @@ int main(int argc, char* argv[]) {
                 print_port(tcph->src_port,tcph->dst_port);
                 packet += (tcph->h_len*4);
                 int data_len = ntohs(iph->total_len) - iph->h_len*4 - tcph->h_len*4;
-                for (int i=0;i<data_len;i++) {
+                int print_len = min(data_len,16);
+                for (int i=0;i<print_len;i++) {
                     if (i == 15){
-                        printf("%c\n\n\n", packet[i]);
-                        break;
+                        printf("%02x\n\n\n", packet[i]);
                     }
                     else
-                        printf("%c", packet[i]);
+                        printf("%02x ", packet[i]);
                 }
             }
         }
