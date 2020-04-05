@@ -132,9 +132,12 @@ int main(int argc, char* argv[]) {
                 print_ip(iph->src_ip,iph->dst_ip);
                 print_port(tcph->src_port,tcph->dst_port);
                 packet += (tcph->h_len*4);
-                for (int i=0;(i<16) && (packet[i] != '\x00');i++) {
-                    if (i == 15)
+                int data_len = ntohs(iph->total_len) - iph->h_len*4 - tcph->h_len*4;
+                for (int i=0;i<data_len;i++) {
+                    if (i == 15){
                         printf("%c\n\n\n", packet[i]);
+                        break;
+                    }
                     else
                         printf("%c", packet[i]);
                 }
