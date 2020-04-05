@@ -136,13 +136,9 @@ int main(int argc, char* argv[]) {
                 packet += (tcph->h_len*4);
                 int data_len = ntohs(iph->total_len) - iph->h_len*4 - tcph->h_len*4;
                 int print_len = min(data_len,16);
-                for (int i=0;i<print_len;i++) {
-                    if (i == 15){
-                        printf("%02x\n\n\n", packet[i]);
-                    }
-                    else
-                        printf("%02x ", packet[i]);
-                }
+                for (int i=0;i<print_len;i++)
+                    printf("%02x ", packet[i]);
+                printf("\n-------------------------------------------\n\n");
             }
         }
     }
