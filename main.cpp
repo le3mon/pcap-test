@@ -125,21 +125,21 @@ int main(int argc, char* argv[]) {
             break;
         }
         type_ethernet *eth = reinterpret_cast<type_ethernet*>(const_cast<u_char*>(packet)); // use c++ style cast
-        if(ntohs(eth->type) == ETHERTYPE_IP){
-            type_ip *iph = reinterpret_cast<type_ip*>(const_cast<u_char*>(packet+=sizeof (type_ethernet)));
-            if(iph->proto == IPPROTO_TCP){
-                type_tcp *tcph = reinterpret_cast<type_tcp*>(const_cast<u_char*>(packet+=(iph->h_len*4)));
-                print_mac(eth->src_mac, eth->dst_mac);
-                print_ip(iph->src_ip,iph->dst_ip);
-                print_port(tcph->src_port,tcph->dst_port);
-                packet += (tcph->h_len*4);
-                int data_len = ntohs(iph->total_len) - iph->h_len*4 - tcph->h_len*4;
-                int print_len = min(data_len,16);
-                for (int i=0;i<print_len;i++)
-                    printf("%02x ", packet[i]);
-                printf("\n-------------------------------------------\n\n");
-            }
-        }
+        if(ntohs(eth->type) != ETHERTYPE_IP)
+            continue;
+        type_ip *iph = reinterpret_cast<type_ip*>(const_cast<u_char*>(packet+=sizeof (type_ethernet)));
+        if(iph->proto != IPPROTO_TCP)
+            continue;
+        type_tcp *tcph = reinterpret_cast<type_tcp*>(const_cast<u_char*>(packet+=(iph->h_len*4)));
+        print_mac(eth->src_mac, eth->dst_mac);
+        print_ip(iph->src_ip,iph->dst_ip);
+        print_port(tcph->src_port,tcph->dst_port);
+        packet += (tcph->h_len*4);
+        int data_len = ntohs(iph->total_len) - iph->h_len*4 - tcph->h_len*4;
+        int print_len = min(data_len,16);
+        for (int i=0;i<print_len;i++)
+            printf("%02x ", packet[i]);
+        printf("\n-------------------------------------------\n\n");
     }
     pcap_close(handle);
 }
